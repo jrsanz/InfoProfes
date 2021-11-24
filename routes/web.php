@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfesorController;
+use App\Models\Profesor;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/profesor/showAll', [ProfesorController::class, 'show_all'])->name('profesor.showAll');
 Route::resource('profesor', ProfesorController::class);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {

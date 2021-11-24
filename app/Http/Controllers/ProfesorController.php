@@ -26,7 +26,7 @@ class ProfesorController extends Controller
      */
     public function create()
     {
-        return view('profesores/profesoresForm');
+        return view('profesores.profesoresForm');
     }
 
     /**
@@ -42,15 +42,40 @@ class ProfesorController extends Controller
             'nombre' => 'required',
             'apellido_paterno' => 'required',
             'apellido_materno' => 'required',
-            'cu' => 'required'
+            'cu' => 'required',
+
+            'materia' => 'required|alpha_num',
+            'nrc' => 'required|numeric',
+
+            'puntualidad' => 'required|numeric',
+            'personalidad' => 'required|numeric',
+            'aprendizaje_obtenido' => 'required|numeric',
+            'manera_evaluar' => 'required|numeric',
+            'calificacion_obtenida' => 'required|numeric',
+            'conocimiento' => 'required|numeric',
+            'categoria' => 'required|alpha'
         ]);
 
         //Crear registro utilizando el modelo
         $profesor = Profesor::create($request->all());
-        $profesor->materias()->create([
+
+        //Vincularlo con la tabla materias
+        $profesor->subjects()->create([
             'profesor_id' => $profesor->id,
             'materia' => $request->materia,
             'nrc' => $request->nrc,
+        ]);
+
+        //Vincularlo con la tabla grades
+        $profesor->grades()->create([
+            'profesor_id' => $profesor->id,
+            'puntualidad' => $request->puntualidad,
+            'personalidad' => $request->personalidad,
+            'aprendizaje_obtenido' => $request->aprendizaje_obtenido,
+            'manera_evaluar' => $request->manera_evaluar,
+            'calificacion_obtenida' => $request->calificacion_obtenida,
+            'conocimiento' => $request->conocimiento,
+            'categoria' => $request->categoria,
         ]);
 
         Alert::success('Profesor Agregado', 'Gracias por apoyar a la comunidad UDG');
@@ -66,7 +91,14 @@ class ProfesorController extends Controller
      */
     public function show(Profesor $profesor)
     {
-        //
+        return view('profesores.profesoresShow', compact($profesor));
+    }
+
+    public function show_all()
+    {
+        $profesores = Profesor::all(); 
+
+        return view('profesores.profesoresShow', compact('profesores'));
     }
 
     /**
@@ -77,7 +109,7 @@ class ProfesorController extends Controller
      */
     public function edit(Profesor $profesor)
     {
-        //
+        return view('profesores.profesoresEdit', compact('profesor'));
     }
 
     /**
@@ -89,7 +121,20 @@ class ProfesorController extends Controller
      */
     public function update(Request $request, Profesor $profesor)
     {
-        //
+        //Validar Datos
+        $request->validate([
+            'nombre' => 'required',
+            'apellido_paterno' => 'required',
+            'apellido_materno' => 'required',
+            'cu' => 'required'
+        ]);
+
+        //Actualizar registro utilizando el modelo
+        Profesor::where('id', $profesor->id)->update($request->except('_method', '_token'));
+
+        Alert::success('Profesor Editado', 'El profesor fue actualizado correctamente');
+
+        return redirect()->route('profesor.showAll');
     }
 
     /**
@@ -100,6 +145,7 @@ class ProfesorController extends Controller
      */
     public function destroy(Profesor $profesor)
     {
-        //
+        $profesor->delete();
+        return redirect()->back();
     }
 }

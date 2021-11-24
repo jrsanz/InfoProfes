@@ -5,6 +5,15 @@
 </x-header>
 
 <x-navbar>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form class="shadow-lg p-3 my-5 rounded create_profesor" action="{{ route('profesor.store') }}" method="POST" style="background-color: #e5d9b0;">
         @csrf
         <h1 class="text-center my-3">AGREGAR PROFESOR</h1>
@@ -87,8 +96,8 @@
         <br>
         <div class="row">
             <div class="col">
-                <label class="form-label" for="profe_categoria">¿Cómo categorizarías a este profesor?  Es un profe...</label>
-                <select class="form-select" name="profe_categoria" required>
+                <label class="form-label" for="categoria">¿Cómo categorizarías a este profesor?  Es un profe...</label>
+                <select class="form-select" name="categoria" required>
                     <option value="EXCELENTE">EXCELENTE</option>
                     <option value="BARCO">BARCO</option>
                     <option value="ESTRICTO">ESTRICTO</option>

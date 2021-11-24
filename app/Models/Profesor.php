@@ -15,9 +15,14 @@ class Profesor extends Model
         'nombre', 'apellido_paterno', 'apellido_materno', 'cu', 'verificado',
     ];
 
-    public function materias()
+    public function subjects()
     {
-        return $this->hasMany(Materia::class);
+        return $this->hasMany(Subject::class);
+    }
+
+    public function grades()
+    {
+        return $this->hasMany(Grade::class);
     }
 
     public function setNombreAttribute($nombre)
