@@ -3,6 +3,14 @@
 
 <x-navbar>
     <br>
+    <div class="row justify-content-center">
+        <div class="col-12">
+        <x-profesores-search-form>
+            Buscar otro profesor
+        </x-profesores-search-form>
+        </div>
+    </div>
+    <br>
     @foreach($profesores as $profesor)
         @php $a = 1; $aa = false; @endphp
         @php $b = 1; $bb = false; @endphp

@@ -5,16 +5,9 @@
     <br>
     <div class="row justify-content-center">
         <div class="col-12">
-            <form action="{{ route('profesor.search') }}" method="GET">
-                <div class="input-group">
-                    <input type="text" class="form-control me-3" name="nombre" placeholder="Buscar otro profesor"> <br>
-                    <button type="submit" class="btn btn-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-                        </svg>
-                    </button> 
-                </div>
-            </form>
+        <x-profesores-search-form>
+            Buscar otro profesor
+        </x-profesores-search-form>
         </div>
     </div>
     <br>
@@ -54,23 +47,59 @@
                     <div class="row">
                         <div class="col-md-6">
                             <p class="fw-bold d-inline">Puntualidad:</p>
-                            <p class="d-inline">100</p>
+                            <p class="d-inline">
+                                @foreach($puntualidad as $punt)
+                                    @foreach($punt as $key=>$dato)
+                                        {{ intval($dato) }}
+                                    @endforeach
+                                @endforeach
+                            </p>
                             <br>
                             <p class="fw-bold d-inline">Personalidad:</p>
-                            <p class="d-inline">100</p>
+                            <p class="d-inline">
+                                @foreach($personalidad as $pers)
+                                    @foreach($pers as $key=>$dato)
+                                        {{ intval($dato) }}
+                                    @endforeach
+                                @endforeach
+                            </p>
                             <br>
                             <p class="fw-bold d-inline">Aprendizaje obtenido:</p>
-                            <p class="d-inline">100</p>
+                            <p class="d-inline">
+                                @foreach($aprendizaje_obtenido as $aprenobt)
+                                    @foreach($aprenobt as $key=>$dato)
+                                        {{ intval($dato) }}
+                                    @endforeach
+                                @endforeach
+                            </p>
                         </div>
                         <div class="col-md-6">
                             <p class="fw-bold d-inline">Manera de evaluar:</p>
-                            <p class="d-inline">100</p>
+                            <p class="d-inline">
+                                @foreach($manera_evaluar as $maneval)
+                                    @foreach($maneval as $key=>$dato)
+                                        {{ intval($dato) }}
+                                    @endforeach
+                                @endforeach
+                            </p>
                             <br>
                             <p class="fw-bold d-inline">Calificación obtenida:</p>
-                            <p class="d-inline">100</p>
+                            <p class="d-inline">
+                                @foreach($calificacion_obtenida as $calobt)
+                                    @foreach($calobt as $key=>$dato)
+                                        {{ intval($dato) }}
+                                    @endforeach
+                                @endforeach
+                            </p>
                             <br>
                             <p class="fw-bold d-inline">Conocimiento del tema:</p>
-                            <p class="d-inline">100</p>
+                            <p class="d-inline">
+                                @foreach($conocimiento as $conoc)
+                                    @foreach($conoc as $key=>$dato)
+                                        {{ intval($dato) }}
+                                    @endforeach
+                                @endforeach
+                            </p>
                         </div>
                     </div>
                 </div>

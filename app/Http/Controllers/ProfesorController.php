@@ -41,14 +41,15 @@ class ProfesorController extends Controller
     public function store(Request $request)
     {
         //Validar Datos
-        $request->validate([
-            'nombre' => 'required',
-            'apellido_paterno' => 'required',
-            'apellido_materno' => 'required',
+        $request->validate(
+            [
+            'nombre' => 'required|regex:/^[\pL\s\-]+$/u',
+            'apellido_paterno' => 'required|regex:/^[\pL\s\-]+$/u',
+            'apellido_materno' => 'required|regex:/^[\pL\s\-]+$/u',
             'cu' => 'required',
 
-            'materia' => 'required|alpha_num',
-            'nrc' => 'required|numeric',
+            'materia' => 'required|alpha_num|min:5|max:10',
+            'nrc' => 'required|numeric|min:10000|max:999999',
 
             'puntualidad' => 'required|numeric',
             'personalidad' => 'required|numeric',
@@ -56,8 +57,40 @@ class ProfesorController extends Controller
             'manera_evaluar' => 'required|numeric',
             'calificacion_obtenida' => 'required|numeric',
             'conocimiento' => 'required|numeric',
-            'categoria' => 'required|alpha'
-        ]);
+            'categoria' => 'required'
+            ],
+            [
+                'nombre.required' => 'El campo nombre está vacío',
+                'nombre.regex' => 'El campo nombre solo acepta letras',
+                'apellido_paterno.required' => 'El campo apellido paterno está vacío',
+                'apellido_paterno.regex' => 'El campo apellido paterno solo acepta letras',
+                'apellido_materno.required' => 'El campo apellido materno está vacío',
+                'apellido_materno.regex' => 'El campo apellido materno solo acepta letras',
+                'cu.required' => 'El campo centro universitario está vacío',
+
+                'materia.required' => 'El campo materia está vacío',
+                'materia.min' => 'La materia debe tener mínimo 5 caracteres',
+                'materia.max' => 'La materia debe tener máximo 10 caracteres',
+                'materia.alpha_num' => 'La materia no puede incluir espacios',
+                'nrc.required' => 'El campo nrc está vacío',
+                'nrc.min' => 'El nrc debe tener mínimo 5 números',
+                'nrc.max' => 'El nrc debe tener máximo 6 números',
+
+                'puntualidad.required' => 'El campo puntualidad está vacío',
+                'puntualidad.numeric' => 'El campo puntualidad debe ser numérico',
+                'personalidad.required' => 'El campo personalidad está vacío',
+                'personalidad.numeric' => 'El campo personalidad debe ser numérico',
+                'aprendizaje_obtenido.required' => 'El campo aprendizaje obtenido está vacío',
+                'aprendizaje_obtenido.numeric' => 'El campo aprendizaje obtenido debe ser numérico',
+                'manera_evaluar.required' => 'El campo manera de evaluar está vacío',
+                'manera_evaluar.numeric' => 'El campo manera de evaluar debe ser numérico',
+                'calificacion_obtenida.required' => 'El campo calificación obtenida está vacío',
+                'calificacion_obtenida.numeric' => 'El campo calificación obtenida debe ser numérico',
+                'conocimiento.required' => 'El campo conocimiento está vacío',
+                'conocimiento.numeric' => 'El campo conocimiento debe ser numérico',
+                'categoria.required' => 'El campo categoría está vacío'
+            ]
+        );
 
         //Crear registro utilizando el modelo
         $profesor = Profesor::create($request->all());
@@ -95,8 +128,20 @@ class ProfesorController extends Controller
     public function show(Profesor $profesor)
     {
         $materias = Subject::where('profesor_id', $profesor->id)->get();
+        $calificaciones = Grade::where('profesor_id', $profesor->id)->get();
 
-        return view('profesores.profesoresShow', compact('profesor', 'materias'));
+        $opcion = "Busqueda Particular";
+
+        $puntualidad = Profesor::puntualidad($calificaciones, $opcion);
+        $personalidad = Profesor::personalidad($calificaciones, $opcion);
+        $aprendizaje_obtenido = Profesor::aprendizaje_obtenido($calificaciones, $opcion);
+        $manera_evaluar = Profesor::manera_evaluar($calificaciones, $opcion);
+        $calificacion_obtenida = Profesor::calificacion_obtenida($calificaciones, $opcion);
+        $conocimiento = Profesor::conocimiento($calificaciones, $opcion);
+
+        return view('profesores.profesoresShow', compact(
+            'profesor', 'materias', 'puntualidad', 'personalidad', 'aprendizaje_obtenido', 
+            'manera_evaluar', 'calificacion_obtenida', 'conocimiento'));
     }
 
     public function show_all_dp()
@@ -122,39 +167,26 @@ class ProfesorController extends Controller
 
     public function search(Request $request)
     {
+        if($request->get('nombre') == null) {
+            Alert::warning('Campo de búsqueda vacío', 'Debes escribir como mínimo una letra para realizar la búsqueda');
+            return redirect()->back();
+        }
+        
         $search = mb_strtoupper($request->get('nombre'));
         $profesores = Profesor::with('grades')->
                     where('profesors.nombre', 'LIKE', "%$search%")->
                     orWhere('profesors.apellido_paterno', 'LIKE', "%$search%")->
                     orWhere('profesors.apellido_materno', 'LIKE', "%$search%")->get();
 
-        $a = array();
-        $b = array();
-        $c = array();
-        $d = array();
-        $e = array();
-        $f = array();
-        $g = array();
-        
-        foreach($profesores as $profesor) {
-            array_push($a, $profesor->id, DB::table('grades')->where('profesor_id', $profesor->id)->avg('puntualidad'));
-            array_push($b, $profesor->id, DB::table('grades')->where('profesor_id', $profesor->id)->avg('personalidad'));
-            array_push($c, $profesor->id, DB::table('grades')->where('profesor_id', $profesor->id)->avg('aprendizaje_obtenido'));
-            array_push($d, $profesor->id, DB::table('grades')->where('profesor_id', $profesor->id)->avg('manera_evaluar'));
-            array_push($e, $profesor->id, DB::table('grades')->where('profesor_id', $profesor->id)->avg('calificacion_obtenida'));
-            array_push($f, $profesor->id, DB::table('grades')->where('profesor_id', $profesor->id)->avg('conocimiento'));
-        }
+        $opcion = "Busqueda General";
 
-        $puntualidad = array_chunk($a, 2);
-        $personalidad = array_chunk($b, 2);
-        $aprendizaje_obtenido = array_chunk($c, 2);
-        $manera_evaluar = array_chunk($d, 2);
-        $calificacion_obtenida = array_chunk($e, 2);
-        $conocimiento = array_chunk($f, 2);
-
-        //dd($profesores);
-        //dd($puntualidad);
-        //dd($calificaciones_promedio);
+        //Obtener promedios
+        $puntualidad = Profesor::puntualidad($profesores, $opcion);
+        $personalidad = Profesor::personalidad($profesores, $opcion);
+        $aprendizaje_obtenido = Profesor::aprendizaje_obtenido($profesores, $opcion);
+        $manera_evaluar = Profesor::manera_evaluar($profesores, $opcion);
+        $calificacion_obtenida = Profesor::calificacion_obtenida($profesores, $opcion);
+        $conocimiento = Profesor::conocimiento($profesores, $opcion);
 
         if(!$profesores->count())
             return view('profesores.profesoresNotFound');
@@ -197,7 +229,7 @@ class ProfesorController extends Controller
 
         Alert::success('Profesor Editado', 'El profesor fue actualizado correctamente');
 
-        return redirect()->route('profesor.showAll');
+        return redirect()->route('profesor.showAllDP');
     }
 
     /**
