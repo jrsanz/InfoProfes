@@ -1,6 +1,6 @@
     <footer class="d-flex justify-content-between py-3 align-items-center" style="background-color: #dac88e;">
         <div class="d-flex align-items-center mx-3">
-            <a href="#"><img src="{{asset('img/InfoProfes Logo.JPG')}}" width="100" height="40"></a>
+            <img src="{{asset('img/InfoProfes Logo.JPG')}}" width="100" height="40">
             <span class="text-muted">&nbsp; © 2021. Derechos reservados.</span>
         </div>
         <ul class="nav justify-content-end list-unstyled d-flex mx-3">

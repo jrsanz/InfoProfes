@@ -19,7 +19,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/profesor/showAll', [ProfesorController::class, 'show_all'])->name('profesor.showAll');
+Route::get('/profesor/showAllDP', [ProfesorController::class, 'show_all_dp'])->name('profesor.showAllDP');
+Route::get('/profesor/showAllDE', [ProfesorController::class, 'show_all_de'])->name('profesor.showAllDE');
+Route::get('/profesor/showAllDC', [ProfesorController::class, 'show_all_dc'])->name('profesor.showAllDC');
+Route::get('/profesor/search', [ProfesorController::class, 'search'])->name('profesor.search');
 Route::resource('profesor', ProfesorController::class);
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Grade;
 use App\Models\Profesor;
+use App\Models\Subject;
 use Illuminate\Database\Seeder;
 
 class ProfesorSeeder extends Seeder
@@ -23,6 +24,6 @@ class ProfesorSeeder extends Seeder
             'verificado' => true,
         ]);
 
-        Profesor::factory(20)->has(Grade::factory()->count(1))->create();
+        Profesor::factory(20)->has(Grade::factory()->count(3))->has(Subject::factory()->count(1))->create();
     }
 }

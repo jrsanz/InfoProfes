@@ -9,10 +9,10 @@
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav m-auto">
         <li class="nav-item">
-          <a class="nav-link" href="#">Home</a>
+          <a class="nav-link" href="{{ route('profesor.index') }}">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Home</a>
+          <a class="nav-link" href="#top-10">Top 10</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Home</a>
