@@ -20,6 +20,7 @@ class CreateProfesorsTable extends Migration
             $table->string('apellido_materno');
             $table->string('cu');
             $table->boolean('verificado')->default(false);
+            $table->softDeletes();
         });
     }
 
