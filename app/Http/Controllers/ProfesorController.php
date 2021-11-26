@@ -19,7 +19,7 @@ class ProfesorController extends Controller
      */
     public function index()
     {
-        return view('profesores/profesoresIndex');
+        return view('profesores.profesoresIndex');
     }
 
     /**
@@ -51,12 +51,12 @@ class ProfesorController extends Controller
             'materia' => 'required|alpha_num|min:5|max:10',
             'nrc' => 'required|numeric|min:10000|max:999999',
 
-            'puntualidad' => 'required|numeric',
-            'personalidad' => 'required|numeric',
-            'aprendizaje_obtenido' => 'required|numeric',
-            'manera_evaluar' => 'required|numeric',
-            'calificacion_obtenida' => 'required|numeric',
-            'conocimiento' => 'required|numeric',
+            'puntualidad' => 'required|numeric|min:0|max:100',
+            'personalidad' => 'required|numeric|min:0|max:100',
+            'aprendizaje_obtenido' => 'required|numeric|min:0|max:100',
+            'manera_evaluar' => 'required|numeric|min:0|max:100',
+            'calificacion_obtenida' => 'required|numeric|min:0|max:100',
+            'conocimiento' => 'required|numeric|min:0|max:100',
             'categoria' => 'required'
             ],
             [
@@ -78,16 +78,28 @@ class ProfesorController extends Controller
 
                 'puntualidad.required' => 'El campo puntualidad está vacío',
                 'puntualidad.numeric' => 'El campo puntualidad debe ser numérico',
+                'puntualidad.min' => 'La calificación debe ser entre 0-100',
+                'puntualidad.max' => 'La calificación debe ser entre 0-100',
                 'personalidad.required' => 'El campo personalidad está vacío',
                 'personalidad.numeric' => 'El campo personalidad debe ser numérico',
+                'personalidad.min' => 'La calificación debe ser entre 0-100',
+                'personalidad.max' => 'La calificación debe ser entre 0-100',
                 'aprendizaje_obtenido.required' => 'El campo aprendizaje obtenido está vacío',
                 'aprendizaje_obtenido.numeric' => 'El campo aprendizaje obtenido debe ser numérico',
+                'aprendizaje_obtenido.min' => 'La calificación debe ser entre 0-100',
+                'aprendizaje_obtenido.max' => 'La calificación debe ser entre 0-100',
                 'manera_evaluar.required' => 'El campo manera de evaluar está vacío',
                 'manera_evaluar.numeric' => 'El campo manera de evaluar debe ser numérico',
+                'manera_evaluar.min' => 'La calificación debe ser entre 0-100',
+                'manera_evaluar.max' => 'La calificación debe ser entre 0-100',
                 'calificacion_obtenida.required' => 'El campo calificación obtenida está vacío',
                 'calificacion_obtenida.numeric' => 'El campo calificación obtenida debe ser numérico',
+                'calificacion_obtenida.min' => 'La calificación debe ser entre 0-100',
+                'calificacion_obtenida.max' => 'La calificación debe ser entre 0-100',
                 'conocimiento.required' => 'El campo conocimiento está vacío',
                 'conocimiento.numeric' => 'El campo conocimiento debe ser numérico',
+                'conocimiento.min' => 'La calificación debe ser entre 0-100',
+                'conocimiento.max' => 'La calificación debe ser entre 0-100',
                 'categoria.required' => 'El campo categoría está vacío'
             ]
         );
@@ -139,9 +151,33 @@ class ProfesorController extends Controller
         $calificacion_obtenida = Profesor::calificacion_obtenida($calificaciones, $opcion);
         $conocimiento = Profesor::conocimiento($calificaciones, $opcion);
 
+        $promedios = array();
+        array_push($promedios, $puntualidad, $personalidad, $aprendizaje_obtenido, $manera_evaluar, $calificacion_obtenida, $conocimiento);
+        
+        $i = 0;
+        foreach($promedios as $prom) {
+            foreach($prom as $pr) {
+                if($i==0)
+                    $prueba[$i] = ['name' => 'puntualidad', 'y' => floatval($pr[0])];
+                elseif($i==1)
+                    $prueba[$i] = ['name' => 'personalidad', 'y' => floatval($pr[0])];
+                elseif($i==2)
+                    $prueba[$i] = ['name' => 'aprendizaje_obtenido', 'y' => floatval($pr[0])];
+                elseif($i==3)
+                    $prueba[$i] = ['name' => 'manera_evaluar', 'y' => floatval($pr[0])];
+                elseif($i==4)
+                    $prueba[$i] = ['name' => 'calificacion_obtenida', 'y' => floatval($pr[0])];
+                elseif($i==5)
+                    $prueba[$i] = ['name' => 'conocimiento', 'y' => floatval($pr[0])];
+            }
+            $i++;
+        }
+                
+        //dd($prueba);
+
         return view('profesores.profesoresShow', compact(
             'profesor', 'materias', 'puntualidad', 'personalidad', 'aprendizaje_obtenido', 
-            'manera_evaluar', 'calificacion_obtenida', 'conocimiento'));
+            'manera_evaluar', 'calificacion_obtenida', 'conocimiento'), ["data" => json_encode($prueba)]);
     }
 
     public function show_all_dp()
@@ -188,12 +224,100 @@ class ProfesorController extends Controller
         $calificacion_obtenida = Profesor::calificacion_obtenida($profesores, $opcion);
         $conocimiento = Profesor::conocimiento($profesores, $opcion);
 
+        $promedios = array();
+        array_push($promedios, $puntualidad, $personalidad, $aprendizaje_obtenido, $manera_evaluar, $calificacion_obtenida, $conocimiento);
+
+        $i = 0;
+        foreach($promedios as $prom) {
+            foreach($prom as $pr) {
+                if($i==0)
+                    $prueba[$i] = ['name' => 'puntualidad', 'y' => floatval($pr[1])];
+                elseif($i==1)
+                    $prueba[$i] = ['name' => 'personalidad', 'y' => floatval($pr[1])];
+                elseif($i==2)
+                    $prueba[$i] = ['name' => 'aprendizaje_obtenido', 'y' => floatval($pr[1])];
+                elseif($i==3)
+                    $prueba[$i] = ['name' => 'manera_evaluar', 'y' => floatval($pr[1])];
+                elseif($i==4)
+                    $prueba[$i] = ['name' => 'calificacion_obtenida', 'y' => floatval($pr[1])];
+                elseif($i==5)
+                    $prueba[$i] = ['name' => 'conocimiento', 'y' => floatval($pr[1])];
+            }
+            $i++;
+        }
+                
+        //dd($prueba);
+
         if(!$profesores->count())
             return view('profesores.profesoresNotFound');
         else
             return view('profesores.profesoresSearch', compact(
                 'profesores', 'puntualidad', 'personalidad', 'aprendizaje_obtenido', 
                 'manera_evaluar', 'calificacion_obtenida', 'conocimiento'));
+    }
+
+    public function evaluate(Profesor $profesor)
+    {
+        return view('profesores.profesoresEvaluate', compact('profesor'));
+    }
+
+    public function evaluation(Request $request, Profesor $profesor)
+    {
+        //Validar Datos
+        $request->validate(
+            [
+            'puntualidad' => 'required|numeric|min:0|max:100',
+            'personalidad' => 'required|numeric|min:0|max:100',
+            'aprendizaje_obtenido' => 'required|numeric|min:0|max:100',
+            'manera_evaluar' => 'required|numeric|min:0|max:100',
+            'calificacion_obtenida' => 'required|numeric|min:0|max:100',
+            'conocimiento' => 'required|numeric|min:0|max:100',
+            'categoria' => 'required'
+            ],
+            [
+                'puntualidad.required' => 'El campo puntualidad está vacío',
+                'puntualidad.numeric' => 'El campo puntualidad debe ser numérico',
+                'puntualidad.min' => 'La calificación debe ser entre 0-100',
+                'puntualidad.max' => 'La calificación debe ser entre 0-100',
+                'personalidad.required' => 'El campo personalidad está vacío',
+                'personalidad.numeric' => 'El campo personalidad debe ser numérico',
+                'personalidad.min' => 'La calificación debe ser entre 0-100',
+                'personalidad.max' => 'La calificación debe ser entre 0-100',
+                'aprendizaje_obtenido.required' => 'El campo aprendizaje obtenido está vacío',
+                'aprendizaje_obtenido.numeric' => 'El campo aprendizaje obtenido debe ser numérico',
+                'aprendizaje_obtenido.min' => 'La calificación debe ser entre 0-100',
+                'aprendizaje_obtenido.max' => 'La calificación debe ser entre 0-100',
+                'manera_evaluar.required' => 'El campo manera de evaluar está vacío',
+                'manera_evaluar.numeric' => 'El campo manera de evaluar debe ser numérico',
+                'manera_evaluar.min' => 'La calificación debe ser entre 0-100',
+                'manera_evaluar.max' => 'La calificación debe ser entre 0-100',
+                'calificacion_obtenida.required' => 'El campo calificación obtenida está vacío',
+                'calificacion_obtenida.numeric' => 'El campo calificación obtenida debe ser numérico',
+                'calificacion_obtenida.min' => 'La calificación debe ser entre 0-100',
+                'calificacion_obtenida.max' => 'La calificación debe ser entre 0-100',
+                'conocimiento.required' => 'El campo conocimiento está vacío',
+                'conocimiento.numeric' => 'El campo conocimiento debe ser numérico',
+                'conocimiento.min' => 'La calificación debe ser entre 0-100',
+                'conocimiento.max' => 'La calificación debe ser entre 0-100',
+                'categoria.required' => 'El campo categoría está vacío'
+            ]
+        );
+
+        //Crear registro utilizando el modelo
+        Grade::create([
+            'profesor_id' => $profesor->id,
+            'puntualidad' => $request->puntualidad,
+            'personalidad' => $request->personalidad,
+            'aprendizaje_obtenido' => $request->aprendizaje_obtenido,
+            'manera_evaluar' => $request->manera_evaluar,
+            'calificacion_obtenida' => $request->calificacion_obtenida,
+            'conocimiento' => $request->conocimiento,
+            'categoria' => $request->categoria
+        ]);
+
+        Alert::success('Evaluación Exitosa', 'Gracias por apoyar a la comunidad UDG');
+
+        return redirect()->route('profesor.show', $profesor);
     }
 
     /**

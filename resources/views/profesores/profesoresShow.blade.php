@@ -101,12 +101,16 @@
                                 @endforeach
                             </p>
                         </div>
+                        <br>
+                        <div class="col-12 mt-3" id="grafico">
+
+                        </div>
                     </div>
                 </div>
             </div>
             <hr>
             <div class="d-flex justify-content-center">
-                <a href="#"><button class="btn btn-primary px-5 py-3">Evaluar Profesor</button></a>
+                <a href="{{ route('profesor.evaluate', $profesor) }}"><button class="btn btn-primary px-5 py-3">Evaluar Profesor</button></a>
             </div>
             <hr>
             <div class="card" style="background-color: #908d84;">
@@ -126,4 +130,43 @@
 </x-navbar>
 
 <x-footer>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <script>
+        Highcharts.chart('grafico', {
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: 'Puntos Fuertes Del Profesor'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            accessibility: {
+                point: {
+                    valueSuffix: '%'
+                }
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            },
+            series: [{
+                name: 'Brands',
+                colorByPoint: true,
+                data: <?= $data ?>
+            }]
+        });
+    </script>
 </x-footer>
