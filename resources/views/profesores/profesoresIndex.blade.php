@@ -17,29 +17,28 @@
     </div>
     
     <br>
-    <h1 class="text-center my-4">BÚSQUEDA POR CENTRO UNIVERSITARIO</h1> <br>
+    <h1 class="text-center my-4">CENTROS UNIVERSITARIOS EN INFOPROFES</h1> <br>
     <div class="row justify-content-center">
-        <form action="" method="GET">
-            <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-outline-dark col-md-3 py-3 mb-md-5" name="filter" value="CUCEI">CUCEI</button>
-                <button type="submit" class="btn btn-outline-dark col-md-3 offset-md-1 py-3 mb-md-5" name="filter" value="CUCEA">CUCEA</button>
-                <button type="submit" class="btn btn-outline-dark col-md-3 offset-md-1 py-3 mb-md-5" name="filter" value="CUCS">CUCS</button>
-            </div>
-        </form>
+        <div class="d-flex justify-content-center">
+            <button type="button" class="btn btn-outline-dark col-md-3 py-3 mb-md-5">CUCEI</button>
+            <button type="button" class="btn btn-outline-dark col-md-3 offset-md-1 py-3 mb-md-5">CUCEA</button>
+            <button type="button" class="btn btn-outline-dark col-md-3 offset-md-1 py-3 mb-md-5">CUCS</button>
+        </div>
     </div>
     <div class="row justify-content-center">
         <form action="" method="GET">
             <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-outline-dark col-md-3 py-3 mb-md-5" name="filter" value="CUAAD">CUAAD</button>
-                <button type="submit" class="btn btn-outline-dark col-md-3 offset-md-1 py-3 mb-md-5" name="filter" value="CUCBA">CUCBA</button>
-                <button type="submit" class="btn btn-outline-dark col-md-3 offset-md-1 py-3 mb-md-5" name="filter" value="CUCSH">CUCSH</button>
+                <button type="button" class="btn btn-outline-dark col-md-3 py-3 mb-md-5">CUAAD</button>
+                <button type="button" class="btn btn-outline-dark col-md-3 offset-md-1 py-3 mb-md-5">CUCBA</button>
+                <button type="button" class="btn btn-outline-dark col-md-3 offset-md-1 py-3 mb-md-5">CUCSH</button>
             </div>
         </form>
     </div>
     <br>
 
     <h1 class="text-center" id="top-10">TOP 10 PROFES</h1>
-    <table class="table">
+    <br>
+    <table class="table table-striped table-hover shadow rounded" style="background-color: #e5d9b0; border-color: #89826a;">
         <thead>
             <th>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-award" viewBox="0 0 16 16">
@@ -52,66 +51,16 @@
             <th>Calificación</th>
         </thead>
         <tbody>
+            @php $i=1 @endphp
+            @foreach($top_10 as $top)
             <tr>
-                <td>1</td>
-                <td>A</td>
-                <td>CUCEI</td>
-                <td>90.00</td>
+                <td>{{ $i }}</td>
+                <td>{{ $top->nombre }} {{ $top->apellido_paterno }} {{ $top->apellido_materno }}</td>
+                <td>{{ $top->cu }}</td>
+                <td>{{ round($top->promedio, 2) }}</td>
             </tr>
-            <tr>
-                <td>2</td>
-                <td>A</td>
-                <td>CUCEI</td>
-                <td>90.00</td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>A</td>
-                <td>CUCEI</td>
-                <td>90.00</td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>A</td>
-                <td>CUCEI</td>
-                <td>90.00</td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>A</td>
-                <td>CUCEI</td>
-                <td>90.00</td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td>A</td>
-                <td>CUCEI</td>
-                <td>90.00</td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td>A</td>
-                <td>CUCEI</td>
-                <td>90.00</td>
-            </tr>
-            <tr>
-                <td>8</td>
-                <td>A</td>
-                <td>CUCEI</td>
-                <td>90.00</td>
-            </tr>
-            <tr>
-                <td>9</td>
-                <td>A</td>
-                <td>CUCEI</td>
-                <td>90.00</td>
-            </tr>
-            <tr>
-                <td>10</td>
-                <td>A</td>
-                <td>CUCEI</td>
-                <td>90.00</td>
-            </tr>
+            @php $i++ @endphp
+            @endforeach
         </tbody>
     </table>
     <br>

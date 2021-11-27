@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Grade;
 use App\Models\Profesor;
 use App\Models\Subject;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\DB;
 
@@ -19,7 +21,17 @@ class ProfesorController extends Controller
      */
     public function index()
     {
-        return view('profesores.profesoresIndex');
+        if(Auth::user()->type_of_user == "admin")
+            return redirect()->route('admin.index');
+
+        $top_10 = DB::table('grades')->join('profesors', 'grades.profesor_id', '=', 'profesors.id')
+            ->select('grades.profesor_id', 'profesors.nombre', 'profesors.apellido_paterno', 'profesors.apellido_materno','profesors.cu',
+            DB::raw(
+            'AVG(grades.puntualidad + grades.personalidad + grades.aprendizaje_obtenido + grades.manera_evaluar +
+            grades.calificacion_obtenida + grades.conocimiento)/6 as promedio'
+            ))->groupBy('grades.profesor_id')->orderBy('promedio', 'desc')->limit(10)->get();
+
+        return view('profesores.profesoresIndex', compact('top_10'));
     }
 
     /**
@@ -29,6 +41,9 @@ class ProfesorController extends Controller
      */
     public function create()
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
         return view('profesores.profesoresForm');
     }
 
@@ -40,6 +55,9 @@ class ProfesorController extends Controller
      */
     public function store(Request $request)
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
         //Validar Datos
         $request->validate(
             [
@@ -57,7 +75,8 @@ class ProfesorController extends Controller
             'manera_evaluar' => 'required|numeric|min:0|max:100',
             'calificacion_obtenida' => 'required|numeric|min:0|max:100',
             'conocimiento' => 'required|numeric|min:0|max:100',
-            'categoria' => 'required'
+            'categoria' => 'required',
+            'comentario' => 'required'
             ],
             [
                 'nombre.required' => 'El campo nombre está vacío',
@@ -73,8 +92,10 @@ class ProfesorController extends Controller
                 'materia.max' => 'La materia debe tener máximo 10 caracteres',
                 'materia.alpha_num' => 'La materia no puede incluir espacios',
                 'nrc.required' => 'El campo nrc está vacío',
+                'nrc.numeric' => 'El nrc debe ser un número',
                 'nrc.min' => 'El nrc debe tener mínimo 5 números',
                 'nrc.max' => 'El nrc debe tener máximo 6 números',
+                'nrc.required' => 'El campo nrc está vacío',
 
                 'puntualidad.required' => 'El campo puntualidad está vacío',
                 'puntualidad.numeric' => 'El campo puntualidad debe ser numérico',
@@ -100,7 +121,8 @@ class ProfesorController extends Controller
                 'conocimiento.numeric' => 'El campo conocimiento debe ser numérico',
                 'conocimiento.min' => 'La calificación debe ser entre 0-100',
                 'conocimiento.max' => 'La calificación debe ser entre 0-100',
-                'categoria.required' => 'El campo categoría está vacío'
+                'categoria.required' => 'El campo categoría está vacío',
+                'comentario.required' => 'Apoyanos escribiendo tu opinión sobre este profesor'
             ]
         );
 
@@ -117,6 +139,7 @@ class ProfesorController extends Controller
         //Vincularlo con la tabla grades
         $profesor->grades()->create([
             'profesor_id' => $profesor->id,
+            'user_id' => (Auth::check()) ? Auth::user()->id : '1',
             'puntualidad' => $request->puntualidad,
             'personalidad' => $request->personalidad,
             'aprendizaje_obtenido' => $request->aprendizaje_obtenido,
@@ -124,11 +147,12 @@ class ProfesorController extends Controller
             'calificacion_obtenida' => $request->calificacion_obtenida,
             'conocimiento' => $request->conocimiento,
             'categoria' => $request->categoria,
+            'comentario' => $request->comentario,
         ]);
 
         Alert::success('Profesor Agregado', 'Gracias por apoyar a la comunidad UDG');
 
-        return redirect()->route('profesor.index');
+        return redirect()->route('profesor.show', compact('profesor'));
     }
 
     /**
@@ -139,8 +163,12 @@ class ProfesorController extends Controller
      */
     public function show(Profesor $profesor)
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+        
+        $usuarios = User::all();
         $materias = Subject::where('profesor_id', $profesor->id)->get();
-        $calificaciones = Grade::where('profesor_id', $profesor->id)->get();
+        $calificaciones = Grade::where('profesor_id', $profesor->id)->orderBy('created_at', 'desc')->get();
 
         $opcion = "Busqueda Particular";
 
@@ -155,33 +183,34 @@ class ProfesorController extends Controller
         array_push($promedios, $puntualidad, $personalidad, $aprendizaje_obtenido, $manera_evaluar, $calificacion_obtenida, $conocimiento);
         
         $i = 0;
-        foreach($promedios as $prom) {
-            foreach($prom as $pr) {
+        foreach($promedios as $promedio) {
+            foreach($promedio as $prom) {
                 if($i==0)
-                    $prueba[$i] = ['name' => 'puntualidad', 'y' => floatval($pr[0])];
+                    $grafica[$i] = ['name' => 'puntualidad', 'y' => floatval($prom[0])];
                 elseif($i==1)
-                    $prueba[$i] = ['name' => 'personalidad', 'y' => floatval($pr[0])];
+                    $grafica[$i] = ['name' => 'personalidad', 'y' => floatval($prom[0])];
                 elseif($i==2)
-                    $prueba[$i] = ['name' => 'aprendizaje_obtenido', 'y' => floatval($pr[0])];
+                    $grafica[$i] = ['name' => 'aprendizaje_obtenido', 'y' => floatval($prom[0])];
                 elseif($i==3)
-                    $prueba[$i] = ['name' => 'manera_evaluar', 'y' => floatval($pr[0])];
+                    $grafica[$i] = ['name' => 'manera_evaluar', 'y' => floatval($prom[0])];
                 elseif($i==4)
-                    $prueba[$i] = ['name' => 'calificacion_obtenida', 'y' => floatval($pr[0])];
+                    $grafica[$i] = ['name' => 'calificacion_obtenida', 'y' => floatval($prom[0])];
                 elseif($i==5)
-                    $prueba[$i] = ['name' => 'conocimiento', 'y' => floatval($pr[0])];
+                    $grafica[$i] = ['name' => 'conocimiento', 'y' => floatval($prom[0])];
             }
             $i++;
         }
-                
-        //dd($prueba);
 
         return view('profesores.profesoresShow', compact(
-            'profesor', 'materias', 'puntualidad', 'personalidad', 'aprendizaje_obtenido', 
-            'manera_evaluar', 'calificacion_obtenida', 'conocimiento'), ["data" => json_encode($prueba)]);
+            'profesor', 'materias', 'calificaciones', 'usuarios', 'puntualidad', 'personalidad', 'aprendizaje_obtenido', 
+            'manera_evaluar', 'calificacion_obtenida', 'conocimiento'), ["data" => json_encode($grafica)]);
     }
 
     public function show_all_dp()
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
         $profesores = Profesor::all();
 
         return view('profesores.profesoresShowDP', compact('profesores'));
@@ -189,6 +218,9 @@ class ProfesorController extends Controller
 
     public function show_all_de()
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
         $profesores = Profesor::with('subjects')->get();
 
         return view('profesores.profesoresShowDE', compact('profesores'));
@@ -196,6 +228,9 @@ class ProfesorController extends Controller
 
     public function show_all_dc()
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
         $profesores = Profesor::with('grades')->get();
 
         return view('profesores.profesoresShowDC', compact('profesores'));
@@ -203,6 +238,9 @@ class ProfesorController extends Controller
 
     public function search(Request $request)
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
         if($request->get('nombre') == null) {
             Alert::warning('Campo de búsqueda vacío', 'Debes escribir como mínimo una letra para realizar la búsqueda');
             return redirect()->back();
@@ -224,45 +262,39 @@ class ProfesorController extends Controller
         $calificacion_obtenida = Profesor::calificacion_obtenida($profesores, $opcion);
         $conocimiento = Profesor::conocimiento($profesores, $opcion);
 
-        $promedios = array();
-        array_push($promedios, $puntualidad, $personalidad, $aprendizaje_obtenido, $manera_evaluar, $calificacion_obtenida, $conocimiento);
+        $i=0;
+        foreach($profesores as $profesor) {
 
-        $i = 0;
-        foreach($promedios as $prom) {
-            foreach($prom as $pr) {
-                if($i==0)
-                    $prueba[$i] = ['name' => 'puntualidad', 'y' => floatval($pr[1])];
-                elseif($i==1)
-                    $prueba[$i] = ['name' => 'personalidad', 'y' => floatval($pr[1])];
-                elseif($i==2)
-                    $prueba[$i] = ['name' => 'aprendizaje_obtenido', 'y' => floatval($pr[1])];
-                elseif($i==3)
-                    $prueba[$i] = ['name' => 'manera_evaluar', 'y' => floatval($pr[1])];
-                elseif($i==4)
-                    $prueba[$i] = ['name' => 'calificacion_obtenida', 'y' => floatval($pr[1])];
-                elseif($i==5)
-                    $prueba[$i] = ['name' => 'conocimiento', 'y' => floatval($pr[1])];
-            }
+        $promedios[$i] = DB::table('grades')->join('profesors', 'grades.profesor_id', '=', 'profesors.id')
+            ->select('grades.profesor_id',
+            DB::raw(
+            'AVG(grades.puntualidad + grades.personalidad + grades.aprendizaje_obtenido + grades.manera_evaluar +
+            grades.calificacion_obtenida + grades.conocimiento)/6 as promedio'
+            ))->where('grades.profesor_id', '=', $profesor->id)->groupBy('grades.profesor_id')->orderBy('promedio', 'desc')->get();
             $i++;
         }
-                
-        //dd($prueba);
 
         if(!$profesores->count())
             return view('profesores.profesoresNotFound');
         else
             return view('profesores.profesoresSearch', compact(
                 'profesores', 'puntualidad', 'personalidad', 'aprendizaje_obtenido', 
-                'manera_evaluar', 'calificacion_obtenida', 'conocimiento'));
+                'manera_evaluar', 'calificacion_obtenida', 'conocimiento', 'promedios'));
     }
 
     public function evaluate(Profesor $profesor)
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
         return view('profesores.profesoresEvaluate', compact('profesor'));
     }
 
     public function evaluation(Request $request, Profesor $profesor)
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
         //Validar Datos
         $request->validate(
             [
@@ -272,7 +304,8 @@ class ProfesorController extends Controller
             'manera_evaluar' => 'required|numeric|min:0|max:100',
             'calificacion_obtenida' => 'required|numeric|min:0|max:100',
             'conocimiento' => 'required|numeric|min:0|max:100',
-            'categoria' => 'required'
+            'categoria' => 'required',
+            'comentario' => 'required'
             ],
             [
                 'puntualidad.required' => 'El campo puntualidad está vacío',
@@ -299,25 +332,71 @@ class ProfesorController extends Controller
                 'conocimiento.numeric' => 'El campo conocimiento debe ser numérico',
                 'conocimiento.min' => 'La calificación debe ser entre 0-100',
                 'conocimiento.max' => 'La calificación debe ser entre 0-100',
-                'categoria.required' => 'El campo categoría está vacío'
+                'categoria.required' => 'El campo categoría está vacío',
+                'comentario.required' => 'Apoyanos escribiendo tu opinión sobre este profesor'
             ]
         );
-
+        
         //Crear registro utilizando el modelo
         Grade::create([
             'profesor_id' => $profesor->id,
+            'user_id' => (Auth::check()) ? Auth::user()->id : '1',
             'puntualidad' => $request->puntualidad,
             'personalidad' => $request->personalidad,
             'aprendizaje_obtenido' => $request->aprendizaje_obtenido,
             'manera_evaluar' => $request->manera_evaluar,
             'calificacion_obtenida' => $request->calificacion_obtenida,
             'conocimiento' => $request->conocimiento,
-            'categoria' => $request->categoria
+            'categoria' => $request->categoria,
+            'comentario' => $request->comentario
         ]);
 
         Alert::success('Evaluación Exitosa', 'Gracias por apoyar a la comunidad UDG');
 
         return redirect()->route('profesor.show', $profesor);
+    }
+
+    public function create_materia(Profesor $profesor)
+    {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
+        return view('profesores.profesoresCreateMateria', compact('profesor'));
+    }
+
+    public function store_materia(Request $request, Profesor $profesor)
+    {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
+        //Validar Datos
+        $request->validate(
+            [
+            'materia' => 'required|alpha_num|min:5|max:10',
+            'nrc' => 'required|numeric|min:10000|max:999999'
+            ],
+            [
+                'materia.required' => 'El campo materia está vacío',
+                'materia.min' => 'La materia debe tener mínimo 5 caracteres',
+                'materia.max' => 'La materia debe tener máximo 10 caracteres',
+                'materia.alpha_num' => 'La materia no puede incluir espacios',
+                'nrc.required' => 'El campo nrc está vacío',
+                'nrc.numeric' => 'El nrc debe ser un número',
+                'nrc.min' => 'El nrc debe tener mínimo 5 números',
+                'nrc.max' => 'El nrc debe tener máximo 6 números'
+            ]
+        );
+
+        //Crear registro utilizando la relación
+        $profesor->subjects()->create([
+            'profesor_id' => $profesor->id,
+            'materia' => $request->materia,
+            'nrc' => $request->nrc,
+        ]);
+
+        Alert::success('Materia Agregada', 'Gracias por apoyar a la comunidad UDG');
+
+        return redirect()->route('profesor.show', compact('profesor'));
     }
 
     /**
@@ -328,6 +407,9 @@ class ProfesorController extends Controller
      */
     public function edit(Profesor $profesor)
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
         return view('profesores.profesoresEdit', compact('profesor'));
     }
 
@@ -340,6 +422,9 @@ class ProfesorController extends Controller
      */
     public function update(Request $request, Profesor $profesor)
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
         //Validar Datos
         $request->validate([
             'nombre' => 'required',
@@ -364,6 +449,9 @@ class ProfesorController extends Controller
      */
     public function destroy(Profesor $profesor)
     {
+        if(Auth::user()->type_of_user == "admin")
+            return abort(404);
+
         $profesor->delete();
         return redirect()->back();
     }

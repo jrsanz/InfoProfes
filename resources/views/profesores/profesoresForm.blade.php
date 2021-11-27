@@ -168,6 +168,18 @@
             </div>
         </div>
         <br>
+        <div class="row">
+            <div class="col">
+                <label class="form-label" for="comentario">Comentarios</label>
+                <textarea class="form-control @error('comentario') is-invalid @enderror" name="comentario" value="{{ old('comentario') }}" style="height: 100px;"></textarea>
+                @error('comentario')
+                    <div class="invalid-feedback">
+                        <strong> {{ $message }} </strong>
+                    </div>
+                @enderror
+            </div>
+        </div>
+        <br>
         <div class="d-flex justify-content-center">
             <button type="submit" class="btn btn-success px-4 py-2">Agregar</button>
         </div>

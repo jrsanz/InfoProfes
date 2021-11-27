@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrador</title>
+    <title>{{ $title ?? 'Administrador' }}</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
+
+    {{ $styles ?? '' }}
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -15,10 +18,15 @@
         <div class="row flex-nowrap">
             <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
                 <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                    <span class="fs-5 d-none d-sm-inline d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">Administrador</span>
+                    <a href="{{ route('admin.index') }}">
+                        <img class="d-none d-sm-inline d-flex align-items-center pb-3 mb-md-0 me-md-auto" src="{{ asset('img/InfoProfes Logo.JPG') }}">
+                    </a>
+                    <a class="text-decoration-none" href="{{ route('admin.index') }}">
+                        <span class="fs-5 d-none d-sm-inline d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white">Administrador</span>
+                    </a>
                     <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                         <li class="nav-item">
-                            <a href="{{ route('dashboard') }}" class="nav-link align-middle px-0">
+                            <a href="{{ route('admin.index') }}" class="nav-link align-middle px-0">
                                 <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Dashboard</span>
                             </a>
                         </li>
@@ -27,19 +35,35 @@
                                 <i class="fs-4 bi-person-video3"></i> <span class="ms-1 d-none d-sm-inline">Profesores</span> </a>
                             <ul class="collapse nav flex-column ms-3" id="submenu1" data-bs-parent="#menu">
                                 <li class="w-100">
-                                    <a href="#" class="nav-link px-0"> <i class="fs-5 bi-person"></i> <span class="d-none d-sm-inline">Datos Personales</span></a>
+                                    <a href="{{ route('admin.profesorShowAllDP') }}" class="nav-link px-0"> <i class="fs-5 bi-person"></i> <span class="d-none d-sm-inline">Datos Personales</span></a>
                                 </li>
                                 <li>
-                                    <a href="#" class="nav-link px-0"> <i class="fs-5 bi-mortarboard"></i> <span class="d-none d-sm-inline">Datos Escolares</span></a>
+                                    <a href="{{ route('admin.profesorShowAllDE') }}" class="nav-link px-0"> <i class="fs-5 bi-mortarboard"></i> <span class="d-none d-sm-inline">Datos Escolares</span></a>
                                 </li>
                                 <li>
-                                    <a href="#" class="nav-link px-0"> <i class="fs-5 bi-graph-up"></i> <span class="d-none d-sm-inline">Datos Evaluaciones</span></a>
+                                    <a href="{{ route('admin.profesorShowAllDC') }}" class="nav-link px-0"> <i class="fs-5 bi-bar-chart"></i> <span class="d-none d-sm-inline">Datos Evaluaciones</span></a>
                                 </li>
                             </ul>
                         </li>
                         <li>
-                            <a href="#" class="nav-link px-0 align-middle">
+                            <a href="{{ route('admin.usuarios') }}" class="nav-link px-0 align-middle">
                                 <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Usuarios</span> </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('admin.search') }}" class="nav-link px-0 align-middle">
+                                <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Evaluar Profes</span> </a>
+                        </li>
+                        <li>
+                            <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                                <i class="fs-4 bi-file-earmark-pdf""></i> <span class="ms-1 d-none d-sm-inline">Generar Reportes</span> </a>
+                            <ul class="collapse nav flex-column ms-3" id="submenu2" data-bs-parent="#menu">
+                                <li class="w-100">
+                                    <a href="{{ route('admin.reporteUsuarios') }}" class="nav-link px-0" target="_blank"> <i class="fs-5 bi-people"></i> <span class="d-none d-sm-inline">Usuarios</span></a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('admin.reporteProfesores') }}" class="nav-link px-0" target="_blank"> <i class="fs-5 bi-person-video3"></i> <span class="d-none d-sm-inline">Profesores</span></a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                     <hr>
@@ -64,10 +88,14 @@
                     </div>
                 </div>
             </div>
-            <div class="col py-3">
-                Content area...
+            <div class="col-auto col-md-9 col-xl-10" style="background-color: #d3d3d3;">
+                {{ $slot }}
             </div>
         </div>
     </div>
+    
+    {{ $script ?? '' }}
+
+    @include('sweetalert::alert')
 </body>
 </html>

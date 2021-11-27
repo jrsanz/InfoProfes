@@ -16,14 +16,6 @@ class ProfesorSeeder extends Seeder
      */
     public function run()
     {
-        Profesor::create([
-            'nombre' => 'Juan',
-            'apellido_paterno' => 'Perez',
-            'apellido_materno' => 'Torres',
-            'cu' => 'CUCEI',
-            'verificado' => true,
-        ]);
-
         Profesor::factory(20)->has(Grade::factory()->count(3))->has(Subject::factory()->count(1))->create();
     }
 }

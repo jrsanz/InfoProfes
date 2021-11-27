@@ -23,10 +23,22 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <h5 class="card-title fw-bold" style="color: #433d2c;">{{ $profesor->nombre }} {{ $profesor->apellido_paterno }} {{ $profesor->apellido_materno }}</h5>
-                        <h5 class="card-title fw-bold" style="color: #433d2c;">Calificación</h5>
+                        <button type="button" class="btn btn-success" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calculator" viewBox="0 0 16 16">
+                            <path d="M12 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h8zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4z"/>
+                            <path d="M4 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5v-2zm0 4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm0 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-4z"/>
+                            </svg>
+                            @foreach($promedios as $promedio)
+                                @foreach($promedio as $prom)
+                                    @if($prom->profesor_id == $profesor->id)
+                                        {{ round($prom->promedio, 2) }}
+                                    @endif
+                                @endforeach
+                            @endforeach
+                        </button>
                     </div>
-                    <h6 class="card-subtitle d-inline" style="color: #433d2c;">CATEGORÍA: </h6>
-                    <h6 class="card-subtitle text-muted d-inline" style="color: #433d2c;">X</h6>
+                    <h6 class="card-subtitle d-inline" style="color: #433d2c;">UNIVERSIDAD: </h6>
+                    <h6 class="card-subtitle text-muted d-inline" style="color: #433d2c;">{{ $profesor->cu }}</h6>
                     <br>
                     <div>
                         <button type="button" class="btn btn-primary d-inline me-2 my-2" disabled>
@@ -38,7 +50,7 @@
                                 @if($aa) @break @endif
                                 @foreach($punt as $key=>$datos)
                                     @if($datos == $profesor->id) @php $a++; @endphp
-                                    @elseif($a == 2) {{ intval($datos) }} @php $aa = true; @endphp @break
+                                    @elseif($a == 2) {{ round($datos, 2) }} @php $aa = true; @endphp @break
                                     @endif
                                 @endforeach
                             @endforeach
@@ -52,7 +64,7 @@
                                 @if($bb) @break @endif
                                 @foreach($perso as $key=>$datos)
                                     @if($datos == $profesor->id) @php $b++; @endphp
-                                    @elseif($b == 2) {{ intval($datos) }} @php $bb = true; @endphp @break
+                                    @elseif($b == 2) {{ round($datos, 2) }} @php $bb = true; @endphp @break
                                     @endif
                                 @endforeach
                             @endforeach
@@ -66,7 +78,7 @@
                                 @if($cc) @break @endif
                                 @foreach($aprend as $key=>$datos)
                                     @if($datos == $profesor->id) @php $c++; @endphp
-                                    @elseif($c == 2) {{ intval($datos) }} @php $cc = true; @endphp @break
+                                    @elseif($c == 2) {{ round($datos, 2) }} @php $cc = true; @endphp @break
                                     @endif
                                 @endforeach
                             @endforeach
@@ -79,7 +91,7 @@
                                 @if($dd) @break @endif
                                 @foreach($maneval as $key=>$datos)
                                     @if($datos == $profesor->id) @php $d++; @endphp
-                                    @elseif($d == 2) {{ intval($datos) }} @php $dd = true; @endphp @break
+                                    @elseif($d == 2) {{ round($datos, 2) }} @php $dd = true; @endphp @break
                                     @endif
                                 @endforeach
                             @endforeach
@@ -92,7 +104,7 @@
                                 @if($ee) @break @endif
                                 @foreach($colobt as $key=>$datos)
                                     @if($datos == $profesor->id) @php $e++; @endphp
-                                    @elseif($e == 2) {{ intval($datos) }} @php $ee = true; @endphp @break
+                                    @elseif($e == 2) {{ round($datos, 2) }} @php $ee = true; @endphp @break
                                     @endif
                                 @endforeach
                             @endforeach
@@ -105,7 +117,7 @@
                                 @if($ff) @break @endif
                                 @foreach($conocim as $key=>$datos)
                                     @if($datos == $profesor->id) @php $f++; @endphp
-                                    @elseif($f == 2) {{ intval($datos) }} @php $ff = true; @endphp @break
+                                    @elseif($f == 2) {{ round($datos, 2) }} @php $ff = true; @endphp @break
                                     @endif
                                 @endforeach
                             @endforeach

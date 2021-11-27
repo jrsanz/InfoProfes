@@ -17,12 +17,12 @@ class Admin
      */
     public function handle(Request $request, Closure $next)
     {
-        switch(Auth::user()->type_of_user) {
+        switch(auth::user()->type_of_user) {
             case('admin'):
                 return $next($request);
             break;
             case('user'):
-                return redirect('user');
+                return redirect('usuario');
             break;
         }
     }

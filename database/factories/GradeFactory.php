@@ -14,6 +14,7 @@ class GradeFactory extends Factory
     public function definition()
     {
         return [
+            'user_id' => $this->faker->randomElement([1]),
             'puntualidad' => $this->faker->randomElement([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]),
             'personalidad' => $this->faker->randomElement([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]),
             'aprendizaje_obtenido' => $this->faker->randomElement([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]),
@@ -23,6 +24,7 @@ class GradeFactory extends Factory
             'categoria' => $this->faker->randomElement([
                 'EXCELENTE', 'BARCO', 'ESTRICTO', 'FANTASMA', 'TERRIBLE',
                 'FLEXIBLE', 'INTERACTIVO', 'REGULAR', 'RELAJADO', 'GROSERO']),
+            'comentario' => $this->faker->paragraphs(2, true),
         ];
     }
 }

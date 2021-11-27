@@ -15,7 +15,8 @@ class CreateGradesTable extends Migration
     {
         Schema::create('grades', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('profesor_id');
+            $table->foreignId('profesor_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->integer('puntualidad');
             $table->integer('personalidad');
             $table->integer('aprendizaje_obtenido');
@@ -23,6 +24,8 @@ class CreateGradesTable extends Migration
             $table->integer('calificacion_obtenida');
             $table->integer('conocimiento');
             $table->string('categoria');
+            $table->text('comentario');
+            $table->timestamps();
         });
     }
 

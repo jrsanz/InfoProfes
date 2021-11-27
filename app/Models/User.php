@@ -59,6 +59,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'profile_photo_url',
     ];
 
+    public function grades()
+    {
+        return $this->hasMany(Grade::class);
+    }
+
     public function setNameAttribute($name)
     {
         return $this->attributes['name'] = mb_strtoupper($name);

@@ -9,10 +9,9 @@ class Grade extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = [
         'profesor_id',
+        'user_id',
         'puntualidad',
         'personalidad',
         'aprendizaje_obtenido',
@@ -20,10 +19,16 @@ class Grade extends Model
         'calificacion_obtenida',
         'conocimiento',
         'categoria',
+        'comentario',
     ];
 
     public function profesor()
     {
         return $this->belongsTo(Profesor::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

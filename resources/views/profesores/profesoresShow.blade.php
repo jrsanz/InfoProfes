@@ -110,6 +110,7 @@
             </div>
             <hr>
             <div class="d-flex justify-content-center">
+                <a href="{{ route('profesor.createMateria', $profesor) }}"><button class="btn btn-primary px-5 py-3 me-5">Asignarle Otra Materia</button></a>
                 <a href="{{ route('profesor.evaluate', $profesor) }}"><button class="btn btn-primary px-5 py-3">Evaluar Profesor</button></a>
             </div>
             <hr>
@@ -124,6 +125,24 @@
             </div>
             <hr>
             <h5>Comentarios</h5>
+            @foreach($calificaciones as $calificacion)
+                <div class="card mt-3">
+                    <div class="card-header d-flex justify-content-between" style="background-color: #c8c6c2;">
+                        <h5>
+                            @foreach($usuarios as $usuario)
+                                @if($usuario->id == $calificacion->user_id)
+                                    {{ $usuario->name }} @break;
+                                @endif
+                            @endforeach
+                        </h5>
+                        <h5>{{ date_format($calificacion->created_at, 'd-m-Y') }}</h5>
+                    </div>
+                    <div class="card-body" style="background-color: #908d84;">
+                        <h5 class="card-title"></h5>
+                        <p> {{ $calificacion->comentario }} </p>
+                    </div>
+                </div>
+            @endforeach
         </div>
     </div>
     <br>
