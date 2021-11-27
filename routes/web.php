@@ -28,6 +28,8 @@ Route::get('/profesor/{profesor}/evaluate', [ProfesorController::class, 'evaluat
 Route::post('/profesor/{profesor}/evaluate', [ProfesorController::class, 'evaluation'])->name('profesor.evaluation');
 Route::get('/profesor/{profesor}/createMateria', [ProfesorController::class, 'create_materia'])->name('profesor.createMateria');
 Route::post('/profesor/{profesor}/storeMateria', [ProfesorController::class, 'store_materia'])->name('profesor.storeMateria');
+Route::get('/profesor/miPerfil', [ProfesorController::class, 'mi_perfil'])->name('profesor.miPerfil');
+Route::patch('/profesor/miPerfil/{usuario}/update', [ProfesorController::class, 'update_mi_perfil'])->name('profesor.updateMiPerfil');
 Route::resource('profesor', ProfesorController::class);
 
 //Ruta Admin
@@ -55,6 +57,8 @@ Route::get('/admin/reporteUsuarios', [AdminController::class, 'reporte_usuarios'
 Route::get('/admin/reporteProfesores', [AdminController::class, 'reporte_profesores'])->name('admin.reporteProfesores');
 Route::get('/admin/profesor/show/{profesor}/createMateria', [AdminController::class, 'create_materia'])->name('admin.createMateria');
 Route::post('/admin/profesor/show/{profesor}/storeMateria', [AdminController::class, 'store_materia'])->name('admin.storeMateria');
+Route::get('/admin/miPerfil', [AdminController::class, 'mi_perfil'])->name('admin.miPerfil');
+Route::patch('/admin/miPerfil/{usuario}/update', [AdminController::class, 'update_mi_perfil'])->name('admin.updateMiPerfil');
 Route::resource('/admin', AdminController::class);
 
 //Ruta User

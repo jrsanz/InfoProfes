@@ -21,7 +21,7 @@ class ProfesorController extends Controller
      */
     public function index()
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return redirect()->route('admin.index');
 
         $top_10 = DB::table('grades')->join('profesors', 'grades.profesor_id', '=', 'profesors.id')
@@ -41,7 +41,7 @@ class ProfesorController extends Controller
      */
     public function create()
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         return view('profesores.profesoresForm');
@@ -55,7 +55,7 @@ class ProfesorController extends Controller
      */
     public function store(Request $request)
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         //Validar Datos
@@ -163,7 +163,7 @@ class ProfesorController extends Controller
      */
     public function show(Profesor $profesor)
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
         
         $usuarios = User::all();
@@ -208,7 +208,7 @@ class ProfesorController extends Controller
 
     public function show_all_dp()
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         $profesores = Profesor::all();
@@ -218,7 +218,7 @@ class ProfesorController extends Controller
 
     public function show_all_de()
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         $profesores = Profesor::with('subjects')->get();
@@ -228,7 +228,7 @@ class ProfesorController extends Controller
 
     public function show_all_dc()
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         $profesores = Profesor::with('grades')->get();
@@ -238,7 +238,7 @@ class ProfesorController extends Controller
 
     public function search(Request $request)
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         if($request->get('nombre') == null) {
@@ -284,7 +284,7 @@ class ProfesorController extends Controller
 
     public function evaluate(Profesor $profesor)
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         return view('profesores.profesoresEvaluate', compact('profesor'));
@@ -292,7 +292,7 @@ class ProfesorController extends Controller
 
     public function evaluation(Request $request, Profesor $profesor)
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         //Validar Datos
@@ -358,7 +358,7 @@ class ProfesorController extends Controller
 
     public function create_materia(Profesor $profesor)
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         return view('profesores.profesoresCreateMateria', compact('profesor'));
@@ -366,7 +366,7 @@ class ProfesorController extends Controller
 
     public function store_materia(Request $request, Profesor $profesor)
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         //Validar Datos
@@ -399,6 +399,57 @@ class ProfesorController extends Controller
         return redirect()->route('profesor.show', compact('profesor'));
     }
 
+    public function mi_perfil()
+    {
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
+            return abort(404);
+
+        $usuarios = User::where('id', Auth::user()->id)->get();
+
+        foreach($usuarios as $usuario)
+            $user = $usuario;
+
+        return view('profesores.miPerfil', compact('user'));
+    }
+
+    public function update_mi_perfil(Request $request, User $usuario)
+    {
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
+            return abort(404);
+
+        //Validar Datos
+        $request->validate(
+            [
+            'name' => 'required|regex:/^[\pL\s\-]+$/u',
+            'email' => 'required|email',
+            ],
+            [
+                'name.required' => 'El campo nombre está vacío',
+                'name.regex' => 'El campo nombre solo acepta letras',
+                'email.required' => 'El campo correo electrónico está vacío',
+                'email.email' => 'Escribe un correo electrónico válido',
+            ]
+        );
+
+        //Storage::disk('public')->delete('/img/avatares/' . Auth::user()->profile_photo_path);
+
+        if($request->profile_photo_path == null)
+            $nombre = '';
+        else {
+            $imagen = $request->file('profile_photo_path');
+            $nombre = time() . '.' . $imagen->getClientOriginalExtension();
+            $destino = public_path('img\avatares');
+            $ruta = $request->profile_photo_path->move($destino, $nombre);
+        }
+
+        //Actualizar registro utilizando el modelo
+        User::where('id', $usuario->id)->update(['name' => $request->name, 'email' => $request->email, 'profile_photo_path' => $nombre]);
+
+        Alert::success('Usuario Editado', 'Datos Actualizados Exitosamente');
+
+        return redirect()->route('profesor.index');
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -407,7 +458,7 @@ class ProfesorController extends Controller
      */
     public function edit(Profesor $profesor)
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         return view('profesores.profesoresEdit', compact('profesor'));
@@ -422,7 +473,7 @@ class ProfesorController extends Controller
      */
     public function update(Request $request, Profesor $profesor)
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         //Validar Datos
@@ -449,7 +500,7 @@ class ProfesorController extends Controller
      */
     public function destroy(Profesor $profesor)
     {
-        if(Auth::user()->type_of_user == "admin")
+        if(Auth::check() && Auth::user()->type_of_user == "admin")
             return abort(404);
 
         $profesor->delete();

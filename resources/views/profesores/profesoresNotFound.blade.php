@@ -1,4 +1,7 @@
 <x-header>
+    <x-slot name="title">
+        Página No Encontrada
+    </x-slot>
 </x-header>
 
 <x-navbar>

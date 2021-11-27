@@ -15,13 +15,10 @@
           <a class="nav-link" href="#top-10">Top 10</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Home</a>
+          <a class="nav-link" href="#otros-sitios">Otros Sitios</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Home</a>
+          <a class="nav-link" href="{{ route('profesor.create') }}">Agregar Profesor</a>
         </li>
       </ul>
       <div class="d-flex">
@@ -29,14 +26,18 @@
           @if(Auth::user()->type_of_user == "user")
             <div class="btn-group">
               <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                @if(Auth::user()->profile_photo_path == null)
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
                       <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
                       <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-                </svg>
+                  </svg>
+                  @else
+                      <img class="rounded-circle me-2" src="/img/avatares/{{ Auth::user()->profile_photo_path }}" style="width: 30px; height: 30px;">
+                  @endif
                 {{ Auth::user()->name }}
               </button>
               <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                  <li><a class="dropdown-item" href="{{ route('profile.show') }}">Profile</a></li>
+                  <li><a class="dropdown-item" href="{{ route('profesor.miPerfil') }}">Mi Perfil</a></li>
                   <li>
                       <hr class="dropdown-divider">
                   </li>

@@ -35,7 +35,6 @@
         </form>
     </div>
     <br>
-
     <h1 class="text-center" id="top-10">TOP 10 PROFES</h1>
     <br>
     <table class="table table-striped table-hover shadow rounded" style="background-color: #e5d9b0; border-color: #89826a;">
@@ -63,6 +62,36 @@
             @endforeach
         </tbody>
     </table>
+    <br>
+    <h1 class="text-center my-4" id="otros-sitios">OTROS SITIOS QUE PUEDEN SER DE TU INTERES</h1>
+    <br>
+    <div class="row justify-content-between">
+        <div class="col-lg-5 offset-col-lg-1 text-center">
+            <div class="py-5 shadow bg-light bg-gradient bg-opacity-75 rounded">
+                <a class="text-decoration-none" href="https://www.facebook.com/groups/155476074566297" target="_blank"><h4>Recomendación de profesores CUCEI</h4></a>
+            </div>
+        </div>
+        <br>
+        <div class="col-lg-5 offset-col-lg-1 text-center"">
+            <div class="py-5 shadow bg-light bg-gradient bg-opacity-75 rounded">
+                <a class="text-decoration-none" href="https://www.facebook.com/groups/cucei.social/" target="_blank"><h4>Qci Social</h4></a>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-between">
+        <div class="col-lg-5 offset-col-lg-1 text-center">
+            <div class="py-5 shadow bg-light bg-gradient bg-opacity-75 rounded">
+                <a class="text-decoration-none" href="https://www.misprofesores.com/" target="_blank"><h4>MisProfesores</h4></a>
+            </div>
+        </div>
+        <br>
+        <div class="col-lg-5 offset-col-lg-1 text-center"">
+            <div class="py-5 shadow bg-light bg-gradient bg-opacity-75 rounded">
+                <a class="text-decoration-none" href="https://www.profesores-udg.com.mx/" target="_blank"><h4>ProfesoresUDG</h4></a>
+            </div>
+        </div>
+    </div>
     <br>
 </x-navbar>
 

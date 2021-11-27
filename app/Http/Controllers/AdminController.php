@@ -10,6 +10,7 @@ use App\Models\Grade;
 use App\Models\Subject;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 use PDF;
 
@@ -26,6 +27,7 @@ class AdminController extends Controller
             return abort(404);
 
         $usuarios = User::all()->count();
+        $mi_usuario = User::where('id', Auth::user()->id)->get();
         $profesores = Profesor::all()->count();
         $profesores_verificados = Profesor::where('verificado', 1)->count();
         $calificaciones = Grade::all()->count();
@@ -47,7 +49,11 @@ class AdminController extends Controller
         $profesores_cu[4] = ['name' => 'CUCBA', 'y' => $profesores_cucba];
         $profesores_cu[5] = ['name' => 'CUCSH', 'y' => $profesores_cucsh];
 
-        return view('administrador.dashboard', compact('usuarios', 'profesores', 'calificaciones'), ["verificados" => json_encode($verificados), "centro_univ" => json_encode($profesores_cu)]);
+        //foreach($mi_usuario as $my_user)
+            //$miperfil = $my_user;
+        //dd($mi_usuario);
+
+        return view('administrador.dashboard', compact('usuarios', 'profesores', 'calificaciones', 'mi_usuario'), ["verificados" => json_encode($verificados), "centro_univ" => json_encode($profesores_cu)]);
     }
 
     /**
@@ -555,6 +561,57 @@ class AdminController extends Controller
         Alert::success('Materia Agregada', 'Gracias por apoyar a la comunidad UDG');
 
         return redirect()->route('admin.profesorShow', compact('profesor'));
+    }
+
+    public function mi_perfil()
+    {
+        if(!Auth::check() || Auth::user()->type_of_user != "admin")
+            return abort(404);
+
+        $usuarios = User::where('id', Auth::user()->id)->get();
+
+        foreach($usuarios as $usuario)
+            $user = $usuario;
+
+        return view('administrador.miPerfil', compact('user'));
+    }
+
+    public function update_mi_perfil(Request $request, User $usuario)
+    {
+        if(!Auth::check() || Auth::user()->type_of_user != "admin")
+            return abort(404);
+
+        //Validar Datos
+        $request->validate(
+            [
+            'name' => 'required|regex:/^[\pL\s\-]+$/u',
+            'email' => 'required|email',
+            ],
+            [
+                'name.required' => 'El campo nombre está vacío',
+                'name.regex' => 'El campo nombre solo acepta letras',
+                'email.required' => 'El campo correo electrónico está vacío',
+                'email.email' => 'Escribe un correo electrónico válido',
+            ]
+        );
+
+        //Storage::disk('public')->delete('/img/avatares/' . Auth::user()->profile_photo_path);
+
+        if($request->profile_photo_path == null)
+            $nombre = '';
+        else {
+            $imagen = $request->file('profile_photo_path');
+            $nombre = time() . '.' . $imagen->getClientOriginalExtension();
+            $destino = public_path('img\avatares');
+            $ruta = $request->profile_photo_path->move($destino, $nombre);
+        }
+
+        //Actualizar registro utilizando el modelo
+        User::where('id', $usuario->id)->update(['name' => $request->name, 'email' => $request->email, 'profile_photo_path' => $nombre]);
+
+        Alert::success('Usuario Editado', 'Datos Actualizados Exitosamente');
+
+        return redirect()->route('admin.index');
     }
 
     /**

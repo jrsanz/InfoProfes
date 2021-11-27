@@ -26,7 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var string[]
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'profile_photo_url',
     ];
 
     /**
@@ -55,9 +55,9 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array
      */
-    protected $appends = [
+    /*protected $appends = [
         'profile_photo_url',
-    ];
+    ];*/
 
     public function grades()
     {

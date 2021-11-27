@@ -1,4 +1,7 @@
 <x-header>
+    <x-slot name="title">
+        Buscar profesor
+    </x-slot>
 </x-header>
 
 <x-navbar>
