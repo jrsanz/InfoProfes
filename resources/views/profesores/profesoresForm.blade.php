@@ -81,7 +81,7 @@
             </div>
         </div>
         <hr>
-        <h5 class="d-inline">CALIFICACIÓN.</h5> <p class="d-inline">Apoyanos siendo el primero en evaluar a este profesor</p>
+        <h5 class="d-inline">CALIFICACIÓN.</h5> <p class="d-inline">Apoyanos siendo el primero en evaluar a este profesor. La calificación va de 0 a 100.</p>
         <div class="row mt-3">
             <div class="col">
                 <label class="form-label" for="puntualidad">Puntualidad</label>

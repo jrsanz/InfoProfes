@@ -22,6 +22,6 @@
             </div>
         </div>
         <br>
-        <a href="{{ route('profesor.create') }}" style="color: black;"><h5 class="text-center">O agregalo a la plataforma</h5></a>
+        <a href="{{ route('admin.profesorCreate') }}" style="color: black;"><h5 class="text-center">O agregalo a la plataforma</h5></a>
     </div>
 </x-dashboard>

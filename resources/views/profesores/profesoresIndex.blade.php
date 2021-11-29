@@ -11,8 +11,6 @@
             </x-profesores-search-form>
             <br>
             <a href="{{ route('profesor.create') }}" style="color: #302c1f;"><h5 class="text-center">¿No encuentres a tu profesor? Agrega uno aquí</h5></a>
-            <br>
-            <a href="{{ route('profesor.showAllDP') }}" style="color: #302c1f;"><h5 class="text-center">Ver Profesores</h5></a>
         </div>
     </div>
     

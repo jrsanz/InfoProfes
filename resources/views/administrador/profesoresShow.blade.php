@@ -123,11 +123,7 @@
                 <hr>
                 <div class="card" style="background-color: #908d84;">
                     <div class="card-body">
-                        <h5 class="d-inline">Evaluaciones</h5>
-                        <div class="d-inline float-end">
-                            <button class="btn btn-primary me-2">Verificados</button>
-                            <button class="btn btn-primary">No Verificados</button>
-                        </div>
+                        <h5 class="text-center">Evaluaciones</h5>
                     </div>
                 </div>
                 <hr>

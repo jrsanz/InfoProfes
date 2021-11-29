@@ -3,7 +3,7 @@
         Editar profesor
     </x-slot>
     <div class="container">
-        <form class="shadow-lg p-3 my-5 rounded create_profesor" action="{{ route('admin.profesorUpdate', $profesor) }}" method="POST" style="background-color: #e5d9b0;" novalidate>
+        <form class="shadow-lg p-3 my-5 rounded create_profesor" action="{{ route('profesor.update', $profesor) }}" method="POST" style="background-color: #e5d9b0;" novalidate>
             @method('PATCH')
             @csrf
             <h1 class="text-center my-3">EDITAR PROFESOR</h1>

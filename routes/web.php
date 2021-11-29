@@ -20,9 +20,6 @@ Route::get('/', function () {
     return redirect()->route('profesor.index');
 });
 
-Route::get('/profesor/showAllDP', [ProfesorController::class, 'show_all_dp'])->name('profesor.showAllDP');
-Route::get('/profesor/showAllDE', [ProfesorController::class, 'show_all_de'])->name('profesor.showAllDE');
-Route::get('/profesor/showAllDC', [ProfesorController::class, 'show_all_dc'])->name('profesor.showAllDC');
 Route::get('/profesor/search', [ProfesorController::class, 'search'])->name('profesor.search');
 Route::get('/profesor/{profesor}/evaluate', [ProfesorController::class, 'evaluate'])->name('profesor.evaluate');
 Route::post('/profesor/{profesor}/evaluate', [ProfesorController::class, 'evaluation'])->name('profesor.evaluation');
@@ -39,9 +36,6 @@ Route::middleware(['auth:sanctum', 'verified', 'admin'])->get('/dashboard', func
 
 Route::get('/admin/profesor/create', [AdminController::class, 'profesor_create'])->name('admin.profesorCreate');
 Route::post('/admin/profesor/store', [AdminController::class, 'profesor_store'])->name('admin.profesorStore');
-Route::get('/admin/profesor/{profesor}/edit', [AdminController::class, 'profesor_edit'])->name('admin.profesorEdit');
-Route::patch('/admin/profesor/{profesor}/update', [AdminController::class, 'profesor_update'])->name('admin.profesorUpdate');
-Route::delete('/admin/profesor/delete/{profesor}', [AdminController::class, 'profesor_delete'])->name('admin.profesorDelete');
 Route::get('/admin/profesor/show/{profesor}', [AdminController::class, 'profesor_show'])->name('admin.profesorShow');
 Route::get('/admin/profesor/showAllDP', [AdminController::class, 'show_all_dp'])->name('admin.profesorShowAllDP');
 Route::get('/admin/profesor/showAllDE', [AdminController::class, 'show_all_de'])->name('admin.profesorShowAllDE');

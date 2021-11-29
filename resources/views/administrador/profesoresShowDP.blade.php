@@ -28,8 +28,8 @@
                         <td>{{ ($profesor->verificado) ? 'Sí' : 'No' }}</td>
                         <td>
                             <div class="btn-group">
-                                <a href="{{ route('admin.profesorEdit', $profesor->id) }}"><button class="btn btn-primary me-2">Editar</button></a>
-                                <form action="{{ route('admin.profesorDelete', $profesor) }}" class="profesor_delete" method="POST">
+                                <a href="{{ route('profesor.edit', $profesor->id) }}"><button class="btn btn-primary me-2">Editar</button></a>
+                                <form action="{{ route('profesor.destroy', $profesor) }}" class="profesor_delete" method="POST">
                                     @method('DELETE')
                                     @csrf
                                     <button type="submit" class="btn btn-danger">Eliminar</button>

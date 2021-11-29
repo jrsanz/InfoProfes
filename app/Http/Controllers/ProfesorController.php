@@ -206,36 +206,6 @@ class ProfesorController extends Controller
             'manera_evaluar', 'calificacion_obtenida', 'conocimiento'), ["data" => json_encode($grafica)]);
     }
 
-    public function show_all_dp()
-    {
-        if(Auth::check() && Auth::user()->type_of_user == "admin")
-            return abort(404);
-
-        $profesores = Profesor::all();
-
-        return view('profesores.profesoresShowDP', compact('profesores'));
-    }
-
-    public function show_all_de()
-    {
-        if(Auth::check() && Auth::user()->type_of_user == "admin")
-            return abort(404);
-
-        $profesores = Profesor::with('subjects')->get();
-
-        return view('profesores.profesoresShowDE', compact('profesores'));
-    }
-
-    public function show_all_dc()
-    {
-        if(Auth::check() && Auth::user()->type_of_user == "admin")
-            return abort(404);
-
-        $profesores = Profesor::with('grades')->get();
-
-        return view('profesores.profesoresShowDC', compact('profesores'));
-    }
-
     public function search(Request $request)
     {
         if(Auth::check() && Auth::user()->type_of_user == "admin")
@@ -458,10 +428,10 @@ class ProfesorController extends Controller
      */
     public function edit(Profesor $profesor)
     {
-        if(Auth::check() && Auth::user()->type_of_user == "admin")
+        if(!Auth::check() || Auth::user()->type_of_user != "admin")
             return abort(404);
 
-        return view('profesores.profesoresEdit', compact('profesor'));
+        return view('administrador.profesorEdit', compact('profesor'));
     }
 
     /**
@@ -473,23 +443,36 @@ class ProfesorController extends Controller
      */
     public function update(Request $request, Profesor $profesor)
     {
-        if(Auth::check() && Auth::user()->type_of_user == "admin")
+        if(!Auth::check() || Auth::user()->type_of_user != "admin")
             return abort(404);
 
         //Validar Datos
-        $request->validate([
-            'nombre' => 'required',
-            'apellido_paterno' => 'required',
-            'apellido_materno' => 'required',
-            'cu' => 'required'
-        ]);
+        $request->validate(
+            [
+            'nombre' => 'required|regex:/^[\pL\s\-]+$/u',
+            'apellido_paterno' => 'required|regex:/^[\pL\s\-]+$/u',
+            'apellido_materno' => 'required|regex:/^[\pL\s\-]+$/u',
+            'cu' => 'required',
+            'verificado' => 'required'
+            ],
+            [
+                'nombre.required' => 'El campo nombre está vacío',
+                'nombre.regex' => 'El campo nombre solo acepta letras',
+                'apellido_paterno.required' => 'El campo apellido paterno está vacío',
+                'apellido_paterno.regex' => 'El campo apellido paterno solo acepta letras',
+                'apellido_materno.required' => 'El campo apellido materno está vacío',
+                'apellido_materno.regex' => 'El campo apellido materno solo acepta letras',
+                'cu.required' => 'El campo centro universitario está vacío',
+                'verificado.required' => 'El campo de profesor verificado está vacío',
+            ]
+        );
 
         //Actualizar registro utilizando el modelo
         Profesor::where('id', $profesor->id)->update($request->except('_method', '_token'));
 
         Alert::success('Profesor Editado', 'El profesor fue actualizado correctamente');
 
-        return redirect()->route('profesor.showAllDP');
+        return redirect()->route('admin.profesorShowAllDP');
     }
 
     /**
@@ -500,7 +483,7 @@ class ProfesorController extends Controller
      */
     public function destroy(Profesor $profesor)
     {
-        if(Auth::check() && Auth::user()->type_of_user == "admin")
+        if(!Auth::check() || Auth::user()->type_of_user != "admin")
             return abort(404);
 
         $profesor->delete();
